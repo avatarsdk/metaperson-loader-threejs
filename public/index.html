@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Avatar SDK MetaPerson Three.js loader</title>
+    <style>
+      body, html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+      }
+      #header {
+        position: fixed;
+        text-align: center;
+      }
+    </style>
+    <script type="importmap">
+    {
+      "imports": {
+        "three": "../libs/three.r162/three.module.js",
+        "three/examples/": "../libs/three.r162/examples/"
+      }
+    }
+    </script>
+  </head>
+
+  <body>
+    <div id="header">
+      <h1>Avatar SDK MetaPerson Three.js loader</h1>
+      <label for="loadFile">Load avatar (.glb only):</label>
+      <input type="file" id="loadFile" accept=".glb" title="Choose .glb file"/>
+      <br/><br/>
+    <div/>
+
+    <canvas id="avatarViewer"></canvas>
+
+    <script type="module">
+      import { prepareScene } from "../src/utils.js"
+      import { AvatarController } from '../src/AvatarController.js'
+
+      const canvas = document.getElementById("avatarViewer");
+
+      const config = {
+        scene: {
+          environmentUrl: '../public/environments/empty_warehouse_01_1k.hdr',
+        },
+
+        camera: {
+          pos: { x: 0, y: 1.6, z: 3.1},
+          lookAt: { x: 0, y: 0.8, z: 3.1}
+        }
+      };
+
+      const avatarController = new AvatarController();
+      const scene = prepareScene(canvas, config);
+      avatarController.loadModel("../public/models/sample_avatar.glb", (avatarController) => {
+        avatarController.addToScene(scene);
+      });
+
+      document.getElementById('loadFile').addEventListener("change", () => {
+        if (event.target.files.length > 0) {
+          var reader = new FileReader();
+          reader.addEventListener('load', (event) => {
+            avatarController.loadModel(event.target.result, (avatarController) => {
+              avatarController.addToScene(scene);
+            });
+          });
+          reader.readAsDataURL(event.target.files[0]);
+        }
+      });
+    </script>
+  </body>
+</html>
