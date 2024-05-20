@@ -5,9 +5,6 @@ The package helps to load MetaPerson avatars in GLB format to the Three.js libra
  * Three.js r162 or a more recent version
  * Supported platforms: Windows, Linux, MacOS, Android, iOS
 
-## Getting Started
-You have two options to get started: you can import this package and the sample via Unity Package Manager or clone the repository and run the sample from it.
-
 ## How To Get An Avatar In GLB From MetaPerson Creator 
 
 You need to use Business Integration API to change export request parameters and get an avatar in GLB format from MetaPerson Creator. It requires the [Pro plan subscription](https://avatarsdk.com/pricing-cloud/) or higher to be purchased. You can find more information about the API in our tutorial [here](https://youtu.be/TXwKq4U15S8).
