@@ -18,7 +18,8 @@
     {
       "imports": {
         "three": "../libs/three.r162/three.module.js",
-        "three/examples/": "../libs/three.r162/examples/"
+        "three/examples/": "../libs/three.r162/examples/",
+        "postprocessing": "../libs/postprocessing/index.js"
       }
     }
     </script>
@@ -29,32 +30,65 @@
       <h1>Avatar SDK MetaPerson Three.js loader</h1>
       <label for="loadFile">Load avatar (.glb only):</label>
       <input type="file" id="loadFile" accept=".glb" title="Choose .glb file"/>
+      <br/>
+      <label for="advancedRendering">Advanced rendering setup:</label>
+      <input type="checkbox" id="advancedRendering"/>
       <br/><br/>
     <div/>
 
     <canvas id="avatarViewer"></canvas>
 
     <script type="module">
-      import { prepareScene } from "../src/utils.js"
+      import { prepareScene, configureLighting, updateRenderingConfigration } from "../src/utils.js"
       import { AvatarController } from '../src/AvatarController.js'
 
-      const canvas = document.getElementById("avatarViewer");
-
-      const config = {
+      const defaltConfig = {
         scene: {
           environmentUrl: '../public/environments/empty_warehouse_01_1k.hdr',
+          environmentLightIntensity : 1.0,
+          environmentYRotation: 0,
+          backgroundColor: 0xa0a0a0,
+          lights: false,
         },
-
+        renderer: {
+            toneMappingExposure: 1.0
+        },
         camera: {
           pos: { x: 0, y: 1.6, z: 3.1},
           lookAt: { x: 0, y: 0.8, z: 3.1}
-        }
+        },
+        postprocessing: false
       };
 
+      const advancedRenderingConfig = {
+        scene: {
+          environmentUrl: '../public/environments/Warm_001.hdr',
+          environmentLightIntensity : 0.3,
+          environmentYRotation: -60,
+          backgroundColor: 0x292932,
+          lights: true,
+        },
+        renderer: {
+            toneMappingExposure: 1.1
+        },
+        camera: {
+          pos: { x: 0, y: 1.6, z: 3.1},
+          lookAt: { x: 0, y: 0.8, z: 3.1}
+        },
+        postprocessing: true
+      };
+
+      function getRenderingConfig() {
+        return document.getElementById('advancedRendering').checked ? advancedRenderingConfig : defaltConfig;
+      }
+
+      const config = getRenderingConfig();
+      const canvas = document.getElementById("avatarViewer");
       const avatarController = new AvatarController();
       const scene = prepareScene(canvas, config);
       avatarController.loadModel("../public/models/sample_avatar.glb", (avatarController) => {
         avatarController.addToScene(scene);
+        configureLighting(scene, config.scene);
       });
 
       document.getElementById('loadFile').addEventListener("change", () => {
@@ -63,10 +97,15 @@
           reader.addEventListener('load', (event) => {
             avatarController.loadModel(event.target.result, (avatarController) => {
               avatarController.addToScene(scene);
+              configureLighting(scene, getRenderingConfig().scene);
             });
           });
           reader.readAsDataURL(event.target.files[0]);
         }
+      });
+
+      document.getElementById('advancedRendering').addEventListener("change", () => {
+        updateRenderingConfigration(scene, getRenderingConfig());
       });
     </script>
   </body>

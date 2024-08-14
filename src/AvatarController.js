@@ -165,7 +165,7 @@ export class AvatarController {
     material3b.depthWrite = false;
   
     const material3c = this.createHaircutMaterial();
-    material3c.side = THREE.DoubleSide;
+    material3c.side = THREE.FrontSide;
     material3c.depthWrite = true;
     material3c.alphaToCoverage = true;
   
